@@ -133,7 +133,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Create reset URL  (`https://featherpass.com/reset-password?token=${token}`; when published)
-    const resetUrl = `https://preview--featherpass-website.lovable.app/reset-password?token=${token}`;
+    const resetUrl = `https://featherpass.com/reset-password?token=${token}`;
 
     // Send email via Resend
     const emailResponse = await resend.emails.send({
