@@ -1,0 +1,359 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Feather pass - Fantasy D&D Design System 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Fantasy Color Palette */
+    --background: 28 15% 8%;  /* Deep charcoal with warm undertone */
+    --foreground: 42 15% 85%; /* Warm parchment text */
+
+    --card: 28 12% 12%; /* Slightly lighter dark surface */
+    --card-foreground: 42 15% 85%;
+
+    --popover: 28 12% 12%;
+    --popover-foreground: 42 15% 85%;
+
+    /* Primary: Deep burgundy/maroon */
+    --primary: 0 45% 25%;
+    --primary-foreground: 42 50% 90%;
+    --primary-glow: 0 45% 35%;
+
+    /* Secondary: Rich gold accent */
+    --secondary: 42 85% 55%;
+    --secondary-foreground: 28 15% 8%;
+
+    /* Logo Colors */
+    --logo-gold: 42 85% 55%; /* Golden color for Chart your Journey · Shape your Destiny */
+    --logo-steel: 210 30% 45%; /* Steel blue for Featherpass */
+    
+    /* Custom utility for a logo blending vignette */
+.logo-vignette-blend {
+    /* Apply a radial gradient that fades from white (opaque) at 70% 
+       to black (transparent) at 100%. */
+    -webkit-mask-image: radial-gradient(circle at center, white 70%, transparent 100%);
+    mask-image: radial-gradient(circle at center, white 70%, transparent 100%);
+       }
+
+    /* Muted: Aged parchment tones */
+    --muted: 35 20% 20%;
+    --muted-foreground: 42 25% 65%;
+
+    /* Accent: Warm amber */
+    --accent: 45 75% 60%;
+    --accent-foreground: 28 15% 8%;
+
+    /* Content Type Colors */
+   --monster-color: 0 75% 35%;
+   --subclass-color: 260 70% 50%;
+   --spell-color: 220 85% 55%;
+   --item-color: 48 96% 53%; /* optional tweak, matches your old yellow-400 look */
+   --encounter-color: 15 85% 45%;
+   --subrace-color: 140 65% 45%;
+   --npc-color: 0 0% 100%;   /* NEW, white for text, border, and bg base */
+
+    /* Article Type Colors */
+    --design-notes-color: 12 80% 55%; /* forge orange red */
+    --dev-diaries-color: 270 65% 50%; /* Violet for future use */
+    --world-building-color: 150 55% 45%; /* Sage emerald */
+    --lore-essays-color: 210 75% 60%; /* Ethereal blue */
+
+    /* Product Status Colors */
+    --product-available-color: 142 76% 36%; /* Green for available */
+    --product-released-color: 221 83% 53%; /* Blue for released/pre-order */
+    --product-kickstarter-color: 50 95% 55%; /* Yellow for kickstarter */
+    --product-development-color: 25 95% 53%; /* Orange for in development */
+    --product-planned-color: 0 72% 51%; /* Red for planned */
+
+    /* Stretch Goals */
+    --unlocked-color: 145 76% 36%; /* Green for unlocked */
+    --locked-color: 2 72% 51%; /* Red locked */
+    
+    --destructive: 0 75% 50%;
+    --destructive-foreground: 42 50% 90%;
+
+    --border: 28 20% 25%;
+    --input: 28 20% 18%;
+    --ring: 42 85% 55%;
+
+    /* Fantasy Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(0 45% 15%) 0%, hsl(28 25% 12%) 50%, hsl(0 30% 8%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(28 12% 12%) 0%, hsl(28 8% 8%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(42 85% 55%) 0%, hsl(38 75% 65%) 100%);
+    --gradient-accent: linear-gradient(90deg, hsl(42 85% 55%) 0%, hsl(45 75% 60%) 100%);
+    --gradient-brushed-gold: linear-gradient(
+      200deg,
+      hsl(42 80% 30%) 0%,
+      hsl(42 85% 60%) 50%,
+      hsl(42 80% 30%) 100%
+    );
+    /* Shadows & Effects */
+    --shadow-fantasy: 0 10px 30px -5px hsla(0 45% 15% / 0.5);
+    --shadow-gold-glow: 0 0 20px hsla(42 85% 55% / 0.3);
+    --shadow-pulse-glow: 0 0 30px hsla(42 85% 55% / 0.6);
+    --shadow-deep: 0 20px 40px -10px hsla(28 15% 8% / 0.8);
+    
+    /* Text Gradients */
+    --gradient-brushed-steel: linear-gradient(
+      200deg, 
+      hsl(210 30% 20%) 0%,
+      hsl(210 30% 50%) 50%,
+      hsl(210 30% 20%) 100%
+    );
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Custom Scrollbar Styling - Fantasy Aesthetic */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 10px;
+    border: 2px solid hsl(var(--background));
+    transition: background 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent));
+  }
+
+  /* Firefox scrollbar styling */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+
+  *:hover {
+    scrollbar-color: hsl(var(--accent)) transparent;
+  }
+}
+
+@layer utilities {
+  :root {
+    --tw-text-outline-color: currentColor;
+    --tw-text-outline-size: 0px;
+    --tw-text-outline-blur: 0px;
+  }
+
+  .text-outline-none { text-shadow: none; }
+
+  .text-outline-sm {
+    --tw-text-outline-size: 1px;
+    text-shadow:
+      0 var(--tw-text-outline-size) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      0 calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      var(--tw-text-outline-size) 0 var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      calc(-1 * var(--tw-text-outline-size)) 0 var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      var(--tw-text-outline-size) var(--tw-text-outline-size) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-size) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      var(--tw-text-outline-size) calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      calc(-1 * var(--tw-text-outline-size)) calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-blur) var(--tw-text-outline-color);
+  }
+
+  .text-outline {
+    --tw-text-outline-size: 2px;
+    text-shadow:
+      0 var(--tw-text-outline-size) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      0 calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      var(--tw-text-outline-size) 0 var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      calc(-1 * var(--tw-text-outline-size)) 0 var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      var(--tw-text-outline-size) var(--tw-text-outline-size) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-size) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      var(--tw-text-outline-size) calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      calc(-1 * var(--tw-text-outline-size)) calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-blur) var(--tw-text-outline-color);
+  }
+
+  .text-outline-lg {
+    --tw-text-outline-size: 3px;
+    text-shadow:
+      0 var(--tw-text-outline-size) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      0 calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      var(--tw-text-outline-size) 0 var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      calc(-1 * var(--tw-text-outline-size)) 0 var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      var(--tw-text-outline-size) var(--tw-text-outline-size) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-size) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      var(--tw-text-outline-size) calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-blur) var(--tw-text-outline-color),
+      calc(-1 * var(--tw-text-outline-size)) calc(-1 * var(--tw-text-outline-size)) var(--tw-text-outline-blur) var(--tw-text-outline-color);
+  }
+
+  /* Smoother outlines for small text: set a subtle blur */
+  .text-outline-soft { --tw-text-outline-blur: 0.6px; }
+  .text-outline-soft-md { --tw-text-outline-blur: 0.8px; }
+  .text-outline-soft-lg { --tw-text-outline-blur: 1.2px; }
+  
+  /* Pulsating glow animation */
+  @keyframes pulse-glow {
+    0%, 100% { 
+      box-shadow: var(--shadow-gold-glow); 
+    }
+    50% { 
+      box-shadow: var(--shadow-pulse-glow); 
+    }
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 1.00s ease-in-out infinite;
+  }
+  
+  /* Brushed steel text gradient utility */
+  .text-brushed-steel {
+    background-image: var(--gradient-brushed-steel);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+   /* Brushed gold text gradient utility */
+  .text-brushed-gold {
+    color: hsl(var(--logo-gold));
+    background-image: var(--gradient-brushed-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  /* Brushed steel with gold outline - layered approach */
+  .text-brushed-steel-outlined {
+    position: relative;
+    display: inline-block;
+    isolation: isolate; /* Creates new stacking context */
+    color: hsl(var(--logo-steel)); /* legible fallback if layered effects fail */
+  }
+
+  .text-brushed-steel-outlined::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1; /* Behind the main text, but within the isolated context */
+    /* Inherit all font properties to match exactly */
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    text-align: inherit;
+    pointer-events: none;
+    /* Gold outline rendered via shadow utilities so it stays behind the fill */
+    @apply text-outline-sm text-outline-soft-lg outline-text-logo-gold;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-brushed-steel-outlined::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    text-align: inherit;
+    pointer-events: none;
+    background-image: var(--gradient-brushed-steel);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    .text-brushed-steel-outlined {
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+}
+
+/* Optional: crisp centered stroke where supported */
+@supports (-webkit-text-stroke: 1px black) {
+  .text-stroke-none { -webkit-text-stroke-width: 0; text-shadow: none; }
+  .text-stroke-sm { -webkit-text-stroke-width: 1px; }
+  .text-stroke { -webkit-text-stroke-width: 2px; }
+  .text-stroke-lg { -webkit-text-stroke-width: 3px; }
+  .text-stroke-none,
+  .text-stroke-sm,
+  .text-stroke,
+  .text-stroke-lg { -webkit-text-stroke-color: var(--tw-text-outline-color); }
+}
