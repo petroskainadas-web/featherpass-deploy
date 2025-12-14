@@ -1,6 +1,9 @@
 /**
  * Cookie Consent Context Provider
  * Manages consent state and provides hooks for components
+ * 
+ * Note: GA is loaded globally via index.html with Consent Mode V2.
+ * This context only updates consent status, not initialization.
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
@@ -13,7 +16,7 @@ import {
   getDefaultConsent,
   getFullConsent,
 } from "@/lib/cookieManager";
-import { initializeGA, updateConsent } from "@/lib/analytics";
+import { updateConsent } from "@/lib/analytics";
 
 interface CookieConsentContextValue {
   consent: CookieConsent | null;
@@ -33,17 +36,16 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
   const [showBanner, setShowBanner] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
-  // Load consent on mount
+    // Load consent on mount and update GA consent status
   useEffect(() => {
     const stored = getStoredConsent();
     setConsent(stored);
     setShowBanner(!stored);
     setInitialized(true);
     
-    // Initialize GA if consent already exists
-    const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
-    if (stored && measurementId) {
-      initializeGA(measurementId);
+    // Update GA consent based on stored preferences
+    // GA is already loaded via index.html with default consent denied
+    if (stored) {
       updateConsent(stored.categories.analytics);
     }
   }, []);
@@ -57,12 +59,8 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
     setConsent(newConsent);
     setShowBanner(false);
     
-    // Initialize GA with consent
-    const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
-    if (measurementId) {
-      initializeGA(measurementId);
-      updateConsent(true);
-    }
+        // Update GA consent to granted
+    updateConsent(true);
   }, []);
 
   const rejectAll = useCallback(() => {
@@ -79,14 +77,8 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
     setConsent(newConsent);
     setShowBanner(false);
     
-    // Initialize or update GA based on analytics consent
-    const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
-    if (categories.analytics && measurementId) {
-      initializeGA(measurementId);
-      updateConsent(true);
-    } else {
-      updateConsent(false);
-    }
+    // Update GA consent based on analytics preference
+    updateConsent(categories.analytics);
   }, []);
 
   const clearAllConsent = useCallback(() => {

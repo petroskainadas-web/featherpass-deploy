@@ -24,37 +24,10 @@ export function isInternalRoute(path: string): boolean {
 }
 
 /**
- * Initialize Google Analytics
+* Check if GA is available (loaded via index.html)
  */
-export function initializeGA(measurementId: string): void {
-  if (!measurementId || typeof window === "undefined") return;
-  
-  // Check if already initialized
-  if (window.gtag) {
-    console.log("GA already initialized");
-    return;
-  }
-  
-  // Create dataLayer
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function() {
-    window.dataLayer?.push(arguments);
-  };
-  
-  // Initialize with consent mode
-  window.gtag("js", new Date());
-  window.gtag("config", measurementId, {
-    send_page_view: false, // We'll handle page views manually
-    anonymize_ip: true,
-  });
-  
-  // Load the script
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-  document.head.appendChild(script);
-  
-  console.log("GA initialized:", measurementId);
+export function isGAAvailable(): boolean {
+  return typeof window !== "undefined" && typeof window.gtag === "function";
 }
 
 /**
