@@ -1,14 +1,29 @@
-User-agent: Googlebot
-Allow: /
+User-agent: GPTBot
+Disallow: /
 
-User-agent: Bingbot
-Allow: /
+User-agent: CCBot
+Disallow: /
 
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+# Social previews (allow so shared links render nicely)
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
 
+# Search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Default
 User-agent: *
 Allow: /
