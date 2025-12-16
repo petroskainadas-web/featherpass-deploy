@@ -24,7 +24,7 @@ const createResetEmail = (email: string, resetUrl: string) => {
       </head>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f4;">
         <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); padding: 40px 20px; text-align: center; border-radius: 10px 10px 0 0;">
-          <h1 style="color: #d4af37; margin: 0; font-size: 28px; font-weight: 700;">Feather Pass</h1>
+          <h1 style="color: #d4af37; margin: 0; font-size: 28px; font-weight: 700;">Featherpass</h1>
           <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 14px;">Password Reset Request</p>
         </div>
         
