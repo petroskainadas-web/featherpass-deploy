@@ -306,7 +306,7 @@ const Gallery = () => {
   };
 
   return (
-    <Layout backgroundImage={galleryBackground} enableParallax overlayOpacity={0.85}>
+    <Layout backgroundImage={galleryBackground} enableParallax overlayOpacity={0.8}>
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-cinzel font-bold mb-4 text-gradient bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">

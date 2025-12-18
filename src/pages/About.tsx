@@ -10,7 +10,7 @@ import bluesky from "@/assets/bluesky.svg"
 const About = () => {
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
 
-  return <Layout backgroundImage={aboutBackground} enableParallax overlayOpacity={0.9}>
+  return <Layout backgroundImage={aboutBackground} enableParallax overlayOpacity={0.8}>
       <div className="container mx-auto px-4 py-12">
         {/* Hero Section */}
         <section className="text-center mb-16">

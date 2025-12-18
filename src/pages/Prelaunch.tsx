@@ -76,14 +76,14 @@ const Prelaunch = () => {
   ];
 
   const stretchGoals = [
-    { goal: "$15K", title: "Bonus Magic Item Collection (6 Items)", unlocked: false },
-    { goal: "$25K", title: "Church Maps (3 digital Church Floorplans)", unlocked: false },
-    { goal: "$35K", title: "Temple Maps (3 digital Temple Floorplans)", unlocked: false },
-    { goal: "$50K", title: "City Maps (3 digital City Maps)", unlocked: false }
+    { goal: "$10K", title: "Bonus Magic Item Collection (6 Items)", unlocked: false },
+    { goal: "$20K", title: "Bonus Adversaries (3 NPC's + 3 Monsters)", unlocked: false },
+    { goal: "$30K", title: "Seven Holy Relics (Artifacts +)", unlocked: false },
+    { goal: "$40K", title: "Seven Holy Champions (Legendary Allies or Foes)", unlocked: false }
   ];
 
   return (
-    <Layout backgroundImage={prelaunchBackground} enableParallax overlayOpacity={0.9}>
+    <Layout backgroundImage={prelaunchBackground} enableParallax overlayOpacity={0.8}>
       <div className="container mx-auto px-4 py-12">
         {/* Hero Section */}
         <section className="text-center mb-16">
@@ -175,7 +175,7 @@ const Prelaunch = () => {
                     $0
                   </div>
                   <div className="text-muted-foreground font-crimson">
-                    pledged of $5,000 goal
+                    pledged of $3,000 goal
                   </div>
                 </div>
                 
@@ -376,7 +376,7 @@ const Prelaunch = () => {
             Don't Miss Out
           </h2>
           <p className="text-xl text-muted-foreground font-crimson mb-8 max-w-2xl mx-auto">
-            This campaign won't last forever. Join hundreds of DMs and players in making Ryon the ultimate D&D campaign setting.
+            This campaign won't last forever. Join hundreds of DMs and players in making Ryon the ultimate campaign setting.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

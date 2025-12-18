@@ -30,7 +30,7 @@ const Products = () => {
           id: 1,
           title: "Ehr'fen: The Book of Elves",
           description: "Discover the Elven cultures and customs, their lyrical Gods, and the enchanted places of Ryon.",
-          prices: { pdf: "$34.99", standard: "$41.99", premium: "$51.99" },
+          prices: { pdf: "$??.??", standard: "$??.??", premium: "$??.??" },
           completion: "85% Complete",
           status: "Kickstarter March 2026",
           image: "/placeholder-book.jpg"
@@ -39,7 +39,7 @@ const Products = () => {
           id: 2,
           title: "Dor'vem: The Book of Dwarves",
           description: "Deep dive into Dwarven society, their forge-Gods, and the sacred mountains of Ryon.",
-          prices: { pdf: "$34.99", standard: "$41.99", premium: "$51.99" },
+          prices: { pdf: "$??.??", standard: "$??.??", premium: "$??.??" },
           completion: "60% Complete",
           status: "In Development",
           image: "/placeholder-book.jpg"
@@ -48,7 +48,7 @@ const Products = () => {
           id: 3,
           title: "Org'hak: The Book of Orcs",
           description: "Explore the honor-bound Orc clans, their war-Gods, and the contested borderlands.",
-          prices: { pdf: "$34.99", standard: "$41.99", premium: "$51.99" },
+          prices: { pdf: "$??.??", standard: "$??.??", premium: "$??.??" },
           completion: "60% Complete",
           status: "In Development",
           image: "/placeholder-book.jpg"
@@ -57,7 +57,7 @@ const Products = () => {
           id: 4,
           title: "Hem'nan: The Book of Humans",
           description: "The diverse Human kingdoms, their pantheon of Gods, and their endless adaptability.",
-          prices: { pdf: "$34.99", standard: "$41.99", premium: "$51.99" },
+          prices: { pdf: "$??.??", standard: "$??.??", premium: "$??.??" },
           completion: "60% Complete",
           status: "In Development",
           image: "/placeholder-book.jpg"
@@ -66,7 +66,7 @@ const Products = () => {
           id: 5,
           title: "Drag'khen: The Book of Dragonborn",
           description: "The proud Dragonborn empire, their ancient draconic Paragons, and traditions of honor.",
-          prices: { pdf: "$34.99", standard: "$41.99", premium: "$51.99" },
+          prices: { pdf: "$??.??", standard: "$??.??", premium: "$??.??" },
           completion: "35% Complete",
           status: "Planned",
           image: "/placeholder-book.jpg"
@@ -75,7 +75,7 @@ const Products = () => {
           id: 6,
           title: "Gen'gom: The Book of Gnomes",
           description: "Ingenious Gnome inventors, their tinkering Gods, and the clockwork cities.",
-          prices: { pdf: "$34.99", standard: "$41.99", premium: "$51.99" },
+          prices: { pdf: "$??.??", standard: "$??.??", premium: "$??.??" },
           completion: "35% Complete",
           status: "Planned",
           image: "/placeholder-book.jpg"
@@ -84,7 +84,7 @@ const Products = () => {
           id: 7,
           title: "Hayl'vin: The Book of Halflings",
           description: "Peaceful Halfling communities, their harvest Gods, and the green countryside.",
-          prices: { pdf: "$34.99", standard: "$41.99", premium: "$51.99" },
+          prices: { pdf: "$??.??", standard: "$??.??", premium: "$??.??" },
           completion: "35% Complete",
           status: "Planned",
           image: "/placeholder-book.jpg"
@@ -93,7 +93,7 @@ const Products = () => {
           id: 8,
           title: "Ash'mal: The Book of Angelborn",
           description: "The celestial Angelborn, their divine heritage, and their luminous Exemplars.",
-          prices: { pdf: "$34.99", standard: "$41.99", premium: "$51.99" },
+          prices: { pdf: "$??.??", standard: "$??.??", premium: "$??.??" },
           completion: "35% Complete",
           status: "Planned",
           image: "/placeholder-book.jpg"
@@ -102,7 +102,7 @@ const Products = () => {
           id: 9,
           title: "Tef'lith: The Book of Fiendspawn",
           description: "The complex Fiendspawn, their infernal origins, and their scheming Patrons.",
-          prices: { pdf: "$34.99", standard: "$41.99", premium: "$51.99" },
+          prices: { pdf: "$??.??", standard: "$??.??", premium: "$??.??" },
           completion: "35% Complete",
           status: "Planned",
           image: "/placeholder-book.jpg"
@@ -299,7 +299,7 @@ const Products = () => {
   };
 
   return (
-    <Layout backgroundImage={forgeBackground} enableParallax overlayOpacity={0.9}>
+    <Layout backgroundImage={forgeBackground} enableParallax overlayOpacity={0.8}>
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">

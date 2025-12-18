@@ -301,7 +301,7 @@ const Library = () => {
   });
 
   return (
-    <Layout backgroundImage={libraryBackground} enableParallax overlayOpacity={0.85}>
+    <Layout backgroundImage={libraryBackground} enableParallax overlayOpacity={0.8}>
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">

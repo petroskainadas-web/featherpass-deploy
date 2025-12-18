@@ -215,7 +215,7 @@ const Index = () => {
       >
         {/* Gradient Overlay */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-0 opacity-85">
+          <div className="absolute inset-0 opacity-80">
             <div
               className="absolute inset-0 mix-blend-overlay"
               style={{ backgroundImage: 'var(--gradient-hero)' }}
