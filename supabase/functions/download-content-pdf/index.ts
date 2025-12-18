@@ -1,5 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 import { validateEnvVar, getErrorMessage } from '../_shared/utils.ts';
+import { enforceIpLimit, enforceValueLimit, limiters, getClientIp } from "../_shared/ratelimiter.ts";
+
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,6 +13,26 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Rate Limit---------------------------------------------
+  const limitedIp = await enforceIpLimit({
+   req,
+   limiter: limiters.downloadIp,
+   key: "download-content-pdf",
+   corsHeaders,
+   mode: "json",
+ });
+ if (limitedIp) return limitedIp;
+
+   const limitedIpDaily = await enforceIpLimit({
+    req,
+    limiter: limiters.downloadIpDaily,
+    key: "download-content-pdf",
+    corsHeaders,
+    mode: "json",
+  });
+  if (limitedIpDaily) return limitedIpDaily;
+
 
   try {
     const supabaseUrl = validateEnvVar('SUPABASE_URL');
@@ -36,6 +58,19 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Rate Limit---------------------------------------------
+    const ip = getClientIp(req);
+
+    const limitedContent = await enforceValueLimit({
+     limiter: limiters.downloadContent,
+     key: "download-content-pdf",
+     label: "content",
+     value: `${ip}:${String(contentId)}`,
+     corsHeaders,
+     mode: "json",
+   });
+   if (limitedContent) return limitedContent;
+   
     console.log(`Processing download for content: ${contentId}`);
 
     // Get the content with its PDF reference

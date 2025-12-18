@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
+import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -97,6 +98,16 @@ serve(async (req: Request) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Rate Limit---------------------------------------------
+  const limitedIp = await enforceIpLimit({
+   req,
+   limiter: limiters.newsletterConfirmIp,
+   key: "newsletter-confirm",
+   corsHeaders,
+   mode: "html",
+  });
+  if (limitedIp) return limitedIp;
+
   try {
     // Get token from query params
     const url = new URL(req.url);
@@ -123,6 +134,17 @@ serve(async (req: Request) => {
         }
       );
     }
+    
+    // Rate Limit---------------------------------------------
+    const limitedToken = await enforceValueLimit({
+     limiter: limiters.newsletterConfirmToken,
+     key: "newsletter-confirm",
+     label: "token",
+     value: token,
+     corsHeaders,
+     mode: "html",
+    });
+    if (limitedToken) return limitedToken;
 
     // Create Supabase client
     const supabaseClient = createClient(

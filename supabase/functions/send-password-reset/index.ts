@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 import { Resend } from "npm:resend@2.0.0";
+import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -67,6 +68,16 @@ const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+  
+  // Rate Limit---------------------------------------------
+  const limitedIp = await enforceIpLimit({
+   req,
+   limiter: limiters.pwSendIp,
+   key: "send-password-reset",
+   corsHeaders,
+   mode: "json",
+  });
+  if (limitedIp) return limitedIp;
 
   try {
     const { email }: ResetRequest = await req.json();
@@ -79,6 +90,17 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const sanitizedEmail = email.trim().toLowerCase();
+    
+    // Rate Limit---------------------------------------------
+    const limitedEmail = await enforceValueLimit({
+     limiter: limiters.pwSendEmail,
+     key: "send-password-reset",
+     label: "email",
+     value: sanitizedEmail,
+     corsHeaders,
+     mode: "json",
+   });
+   if (limitedEmail) return limitedEmail;
 
     // Initialize Supabase client with service role to bypass RLS
     const supabaseUrl = Deno.env.get("SUPABASE_URL");

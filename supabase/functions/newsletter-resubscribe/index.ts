@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
+import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -98,6 +99,16 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+  
+  // Rate Limit---------------------------------------------
+  const limitedIp = await enforceIpLimit({
+   req,
+   limiter: limiters.newsletterResubIp,
+   key: "newsletter-resubscribe",
+   corsHeaders,
+   mode: "json",
+  });
+  if (limitedIp) return limitedIp;
 
   try {
     const { token, email }: ResubscribeRequest = await req.json();
@@ -135,6 +146,18 @@ serve(async (req: Request) => {
           }
         );
       }
+
+      // Rate Limit---------------------------------------------
+      const limitedToken = await enforceValueLimit({
+       limiter: limiters.newsletterResubToken,
+       key: "newsletter-resubscribe",
+       label: "token",
+       value: token,
+       corsHeaders,
+       mode: "json",
+     });
+      if (limitedToken) return limitedToken;
+
       query = query.eq("unsubscribe_token", token);
     } else {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -148,6 +171,18 @@ serve(async (req: Request) => {
           }
         );
       }
+
+      // Rate Limit---------------------------------------------
+      const limitedEmail = await enforceValueLimit({
+       limiter: limiters.newsletterResubEmail,
+       key: "newsletter-resubscribe",
+       label: "email",
+       value: sanitizedEmail,
+       corsHeaders,
+       mode: "json",
+     });
+     if (limitedEmail) return limitedEmail;
+
       query = query.eq("email", sanitizedEmail);
     }
 

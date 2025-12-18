@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
+import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -90,6 +91,16 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+  
+  // Rate Limit---------------------------------------------
+  const limitedIp = await enforceIpLimit({
+   req,
+   limiter: limiters.newsletterSubscribeIp,
+   key: "newsletter-subscribe",
+   corsHeaders,
+   mode: "json",
+  });
+  if (limitedIp) return limitedIp;
 
   try {
     const { email }: SubscribeRequest = await req.json();
@@ -119,6 +130,17 @@ serve(async (req: Request) => {
 
     // Sanitize email
     const sanitizedEmail = email.trim().toLowerCase();
+
+    // Rate Limit---------------------------------------------
+    const limitedEmail = await enforceValueLimit({
+     limiter: limiters.newsletterSubscribeEmail,
+     key: "newsletter-subscribe",
+     label: "email",
+     value: sanitizedEmail,
+     corsHeaders,
+     mode: "json",
+    });
+    if (limitedEmail) return limitedEmail;
 
     // Create Supabase client
     const supabaseClient = createClient(

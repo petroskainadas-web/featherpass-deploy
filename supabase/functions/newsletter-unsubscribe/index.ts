@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -21,6 +22,16 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+  
+  // Rate Limit---------------------------------------------
+  const limitedIp = await enforceIpLimit({
+   req,
+   limiter: limiters.newsletterUnsubIp,
+   key: "newsletter-unsubscribe",
+   corsHeaders,
+   mode: "json",
+  });
+  if (limitedIp) return limitedIp;
 
   try {
     const { token, reason }: UnsubscribeRequest = await req.json();
@@ -50,6 +61,17 @@ serve(async (req: Request) => {
 
     // Sanitize reason if provided
     const sanitizedReason = reason?.trim().substring(0, 500) || null;
+    
+    // Rate Limit---------------------------------------------
+    const limitedToken = await enforceValueLimit({
+     limiter: limiters.newsletterUnsubToken,
+     key: "newsletter-unsubscribe",
+     label: "token",
+     value: token,
+     corsHeaders,
+     mode: "json",
+    });
+    if (limitedToken) return limitedToken;
 
     // Create Supabase client
     const supabaseClient = createClient(

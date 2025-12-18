@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -33,6 +34,16 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+  
+  // Rate Limit---------------------------------------------
+  const limitedIp = await enforceIpLimit({
+   req,
+   limiter: limiters.contactIp,
+   key: "contact-form",
+   corsHeaders,
+   mode: "json",
+  });
+  if (limitedIp) return limitedIp;
 
   try {
     const { name, email, subject, message }: ContactRequest = await req.json();
@@ -65,6 +76,17 @@ serve(async (req: Request) => {
     const sanitizedEmail = sanitizeText(email.trim().toLowerCase(), 255);
     const sanitizedSubject = sanitizeText(subject, 200);
     const sanitizedMessage = sanitizeText(message, 2000);
+
+    // Rate Limit---------------------------------------------
+    const limitedEmail = await enforceValueLimit({
+     limiter: limiters.contactEmail,
+     key: "contact-form",
+     label: "email",
+     value: sanitizedEmail,
+     corsHeaders,
+     mode: "json",
+   });
+   if (limitedEmail) return limitedEmail;
 
     // Validate subject is one of the allowed values
     const allowedSubjects = ["General Feedback", "Sales Inquiry", "Collaboration"];

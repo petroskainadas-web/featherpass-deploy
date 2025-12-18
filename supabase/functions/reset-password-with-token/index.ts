@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,6 +17,16 @@ const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+   
+  // Rate Limit---------------------------------------------
+  const limitedIp = await enforceIpLimit({
+   req,
+   limiter: limiters.pwResetIp,
+   key: "reset-password-with-token",
+   corsHeaders,
+   mode: "json",
+ });
+ if (limitedIp) return limitedIp;
 
   try {
     const { token, password }: ResetPasswordRequest = await req.json();
@@ -39,6 +50,17 @@ const handler = async (req: Request): Promise<Response> => {
         }
       );
     }
+    
+    // Rate Limit---------------------------------------------
+    const limitedToken = await enforceValueLimit({
+     limiter: limiters.pwResetToken,
+     key: "reset-password-with-token",
+     label: "token",
+     value: token,
+     corsHeaders,
+     mode: "json",
+   });
+   if (limitedToken) return limitedToken;
 
     // Initialize Supabase client with service role
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
