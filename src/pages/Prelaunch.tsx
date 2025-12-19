@@ -60,7 +60,7 @@ const Prelaunch = () => {
     {
       name: "Physical Adventurer",
       price: "$50",
-      description: "Hardcover book (Standard color Softcover) + digital edition",
+      description: "Softcover book (Standard color Softcover) + digital edition",
       backers: 0,
       popular: true,
       limited: false 
@@ -77,7 +77,7 @@ const Prelaunch = () => {
 
   const stretchGoals = [
     { goal: "$10K", title: "Bonus Magic Item Collection (6 Items)", unlocked: false },
-    { goal: "$20K", title: "Bonus Adversaries (3 NPC's + 3 Monsters)", unlocked: false },
+    { goal: "$20K", title: "Bonus Adversaries (3 NPCs + 3 Monsters)", unlocked: false },
     { goal: "$30K", title: "Seven Holy Relics (Artifacts +)", unlocked: false },
     { goal: "$40K", title: "Seven Holy Champions (Legendary Allies or Foes)", unlocked: false }
   ];
