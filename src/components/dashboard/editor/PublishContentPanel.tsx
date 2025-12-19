@@ -8,6 +8,7 @@ import MagicItemForm from "@/components/editor/MagicItemForm";
 import SubraceForm from "@/components/editor/SubraceForm";
 import NpcForm from "@/components/editor/NpcForm";
 import SubclassForm from "@/components/editor/SubclassForm";
+import FeatForm from "@/components/editor/FeatForm";
 import { useDashboardContext } from "../context/DashboardContext";
 
 const PublishContentPanel = () => {
@@ -38,6 +39,9 @@ const PublishContentPanel = () => {
       case "subclass":
         setActiveTab("subclass");
         break;
+      case "feat":
+        setActiveTab("feat");
+        break;
       default:
         setActiveTab("monster");
     }
@@ -67,13 +71,14 @@ const PublishContentPanel = () => {
         </CardHeader>
         <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-6 gap-2">
+          <TabsList className="grid grid-cols-7 gap-2">
             <TabsTrigger value="monster">Monster</TabsTrigger>
             <TabsTrigger value="spell">Spell</TabsTrigger>
             <TabsTrigger value="magic_item">Magic Item</TabsTrigger>
             <TabsTrigger value="subrace">Subrace</TabsTrigger>
             <TabsTrigger value="npc">NPC</TabsTrigger>
             <TabsTrigger value="subclass">Subclass</TabsTrigger>
+            <TabsTrigger value="feat">Feat</TabsTrigger>
           </TabsList>
           <TabsContent value="monster" className="pt-6">
             <MonsterForm editContent={editingContent} onSuccess={handleSuccess} />
@@ -91,7 +96,10 @@ const PublishContentPanel = () => {
             <NpcForm editContent={editingContent} onSuccess={handleSuccess} />
           </TabsContent>
           <TabsContent value="subclass" className="pt-6">
-            <SubclassForm editContent={editingContent} onSuccess={handleSuccess} />
+             <SubclassForm editContent={editingContent} onSuccess={handleSuccess} />
+          </TabsContent>
+          <TabsContent value="feat" className="pt-6">
+            <FeatForm editContent={editingContent} onSuccess={handleSuccess} />
           </TabsContent>
         </Tabs>
       </CardContent>

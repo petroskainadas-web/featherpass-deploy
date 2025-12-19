@@ -17,7 +17,7 @@ const badgeVariants = cva(
         subclass: "border-transparent bg-content-subclass/20 text-content-subclass border-content-subclass/40",
         spell: "border-transparent bg-content-spell/20 text-content-spell border-content-spell/40",
         item: "border-transparent bg-content-item/20 text-content-item border-content-item/40",
-        encounter: "border-transparent bg-content-encounter/20 text-content-encounter border-content-encounter/40",
+        feat: "border-transparent bg-content-feat/20 text-content-feat border-content-feat/40",
         subrace: "border-transparent bg-content-subrace/20 text-content-subrace border-content-subrace/40",
         magic_item: "border-content-magic_item/40 bg-content-magic_item/20 text-content-magic_item",
         npc: "border-content-npc bg-content-npc/10 text-content-npc",

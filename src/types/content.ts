@@ -3,8 +3,8 @@
 export interface LibraryContent {
   id: string;
   title: string;
-  content_type: 'monster' | 'spell' | 'magic_item' | 'subrace' | 'npc' | 'subclass';
-  content_data: MonsterData | SpellData | MagicItemData | SubraceData | NpcData | SubclassData;
+  content_type: 'monster' | 'spell' | 'magic_item' | 'subrace' | 'npc' | 'subclass' | 'feat';
+  content_data: MonsterData | SpellData | MagicItemData | SubraceData | NpcData | SubclassData | FeatData;
   level?: string;
   rarity?: string;
   tags?: string[];
@@ -156,4 +156,10 @@ export interface SubclassData {
     description: string;
   }>;
   spells?: string[];
+}
+
+export interface FeatData {
+  category: 'Legacy' | 'Origin' | 'General' | 'Fighting Style' | 'Spell Casting' | 'Epic Boon';
+  overview: string;
+  fullDescription: string;
 }

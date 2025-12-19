@@ -14,6 +14,7 @@ import { MagicItemView } from "@/components/library/MagicItemView";
 import { SubclassView } from "@/components/library/SubclassView";
 import { SubraceView } from "@/components/library/SubraceView";
 import { NpcView } from "@/components/library/NpcView";
+import { FeatView } from "@/components/library/FeatView";
 import { 
   Search, 
   Download, 
@@ -24,7 +25,8 @@ import {
   Gem,
   User,
   Users,
-  Wand2
+  Wand2,
+  Award
 } from "lucide-react";
 import { handlePdfDownload } from "@/lib/downloadHelper";
 import { useToast } from "@/hooks/use-toast";
@@ -113,6 +115,8 @@ const Library = () => {
         return <SubraceView content={selectedContent} />;
       case 'npc':
         return <NpcView content={selectedContent} />;
+      case 'feat':
+        return <FeatView content={selectedContent} />;
       default:
         return <div>Content type not supported</div>;
     }
@@ -126,6 +130,7 @@ const Library = () => {
     { value: "magic_item", label: "Magic Items", icon: Gem },
     { value: "npc", label: "NPCs", icon: User },
     { value: "subrace", label: "Subraces", icon: Users },
+    { value: "feat", label: "Feats", icon: Award },
   ];
 
   useEffect(() => {
@@ -309,7 +314,8 @@ const Library = () => {
             Free Content Library
           </h1>
           <p className="text-xl text-foreground font-crimson max-w-2xl mx-auto">
-            Discover homebrew monsters, subclasses, spells, and more. All free, all ready for your campaigns.
+            Discover homebrew monsters, subclasses, spells, and more. 
+            All free, all ready for your campaigns.
           </p>
         </div>
 
@@ -385,6 +391,8 @@ const Library = () => {
                 description = content.content_data?.background || description;
               } else if (content.content_type === 'subclass') {
                 description = content.content_data?.overview || description;
+              } else if (content.content_type === 'feat') {
+                description = content.content_data?.overview || description;
               } else {
                 description = content.content_data?.description || 
                              content.content_data?.overview || 
@@ -406,6 +414,8 @@ const Library = () => {
                     ? 'hover:shadow-[0_10px_20px_-5px_hsl(var(--npc-color)/0.20)]'
                   : content.content_type === 'subrace'
                     ? 'hover:shadow-[0_10px_20px_-5px_hsl(var(--subrace-color)/0.20)]'
+                    : content.content_type === 'feat'
+                    ? 'hover:shadow-[0_10px_20px_-5px_hsl(var(--feat-color)/0.20)]'
                   : 'hover:shadow-deep'
                 }`}>
                   <CardHeader>
@@ -449,6 +459,12 @@ const Library = () => {
                         {content.content_type === 'subrace' && content.level && (
                           <div className="text-sm text-muted-foreground font-crimson">
                             {content.level}
+                            </div>
+                        )}
+                        
+                        {content.content_type === 'feat' && content.content_data?.category && (
+                          <div className="text-sm text-muted-foreground font-crimson">
+                            {content.content_data.category} Feat
                           </div>
                         )}
                       </div>

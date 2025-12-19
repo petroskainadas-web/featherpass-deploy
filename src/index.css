@@ -52,7 +52,7 @@ All colors MUST be HSL.
    --subclass-color: 260 70% 50%;
    --spell-color: 220 85% 55%;
    --item-color: 48 96% 53%; /* optional tweak, matches your old yellow-400 look */
-   --encounter-color: 15 85% 45%;
+   --feat-color: 15 85% 45%;
    --subrace-color: 140 65% 45%;
    --npc-color: 0 0% 100%;   /* NEW, white for text, border, and bg base */
 

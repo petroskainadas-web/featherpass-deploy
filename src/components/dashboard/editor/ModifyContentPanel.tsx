@@ -68,6 +68,7 @@ const ModifyContentPanel = () => {
             { key: "subrace", label: "Subraces" },
             { key: "npc", label: "NPCs" },
             { key: "subclass", label: "Subclasses" },
+            { key: "feat", label: "Feats" },
           ].map((type) => (
             <Button
               key={type.key}

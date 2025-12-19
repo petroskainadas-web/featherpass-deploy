@@ -42,7 +42,7 @@ export default {
          spell: "hsl(var(--spell-color))",
          item: "hsl(var(--item-color))",                 // keep for compatibility
          magic_item: "hsl(var(--item-color))",           // NEW, mapped to your existing item color
-         encounter: "hsl(var(--encounter-color))",       // keep for now, even if obsolete
+         feat: "hsl(var(--feat-color))",
          subrace: "hsl(var(--subrace-color))",
          npc: "hsl(var(--npc-color))",                   // NEW, white-based token
 
