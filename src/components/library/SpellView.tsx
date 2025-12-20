@@ -11,7 +11,7 @@ export const SpellView = ({ content }: SpellViewProps) => {
   return (
     <div className="space-y-6 font-crimson">
       <div>
-        <h2 className="text-3xl font-cinzel font-bold text-foreground mb-2">{content.title}</h2>
+        <h2 className="text-3xl font-cinzel font-bold text-logo-gold mb-2">{content.title}</h2>
         <p className="text-lg text-muted-foreground">
           Level {content.level} {data.school}
         </p>

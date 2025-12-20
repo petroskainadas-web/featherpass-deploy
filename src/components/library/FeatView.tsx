@@ -11,23 +11,23 @@ export const FeatView = ({ content }: FeatViewProps) => {
   return (
     <div className="space-y-6 font-crimson">
       <div>
-        <h2 className="text-3xl font-cinzel font-bold text-foreground mb-2">{content.title}</h2>
-        <Badge variant="feat" className="capitalize">
+        <h2 className="text-3xl font-cinzel font-bold text-logo-gold mb-2">{content.title}</h2>
+        <p className="text-lg text-muted-foreground">
           {data.category} Feat
-        </Badge>
+        </p>
       </div>
 
       <Separator />
 
       <div>
-        <h3 className="text-lg font-cinzel font-bold mb-2">Overview</h3>
-        <p className="text-muted-foreground">{data.overview}</p>
+        <h3 className="text-lg font-cinzel text-muted-foreground font-bold mb-2">Overview</h3>
+        <p className="text-foreground">{data.overview}</p>
       </div>
 
       <Separator />
 
       <div>
-        <h3 className="text-lg font-cinzel font-bold mb-2">Full Description</h3>
+        <h3 className="text-lg font-cinzel text-muted-foreground font-bold mb-2">Full Description</h3>
         <p className="whitespace-pre-wrap">{data.fullDescription}</p>
       </div>
 
