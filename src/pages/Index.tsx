@@ -75,6 +75,7 @@ const Index = () => {
       case "magic_item": return "item";
       case "npc": return "npc";
       case "subrace": return "subrace";
+      case "feat": return "feat";
       default: return "secondary";
     }
   };
@@ -105,6 +106,7 @@ const Index = () => {
       case "magic_item": return Gem;
       case "npc": return UserIcon;
       case "subrace": return Users;
+      case "feat": return Award;
       default: return BookOpen;
     }
   };
@@ -251,6 +253,8 @@ const Index = () => {
                   description = content.content_data?.background || description;
                 } else if (content.content_type === 'subclass') {
                   description = content.content_data?.overview || description;
+                } else if (content.content_type === 'feat') {
+                  description = content.content_data?.overview || description;
                 } else {
                   description = content.content_data?.description || 
                                content.content_data?.overview || 
@@ -272,6 +276,8 @@ const Index = () => {
                       ? 'hover:shadow-[0_10px_20px_-5px_hsl(var(--npc-color)/0.20)]'
                     : content.content_type === 'subrace'
                       ? 'hover:shadow-[0_10px_20px_-5px_hsl(var(--subrace-color)/0.20)]'
+                      : content.content_type === 'feat'
+                      ? 'hover:shadow-[0_10px_20px_-5px_hsl(var(--feat-color)/0.20)]'
                     : 'hover:shadow-deep'
                   }`}>
                     <CardHeader>
@@ -315,6 +321,12 @@ const Index = () => {
                           {content.content_type === 'subrace' && content.level && (
                             <div className="text-sm text-muted-foreground font-crimson">
                               {content.level}
+                             </div>
+                          )}
+                          
+                          {content.content_type === 'feat' && content.content_data?.category && (
+                            <div className="text-sm text-muted-foreground font-crimson">
+                              {content.content_data.category}
                             </div>
                           )}
                         </div>
