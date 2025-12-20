@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import Layout from "@/components/Layout";
 import heroBackground from "@/assets/hero-background.jpg";
 import homeBottomBackground from "@/assets/backgrounds/home-bottom-bg.jpg";
-import { BookOpen, Users, Zap, Sparkles, ArrowRight, Download, Heart, Library, Clock, PenTool, Shield, Eye, Target, Swords, Wand2, Gem, User as UserIcon } from "lucide-react";
+import { BookOpen, Users, Zap, Sparkles, ArrowRight, Award, Download, Heart, Library, Clock, PenTool, Shield, Eye, Target, Swords, Wand2, Gem, User as UserIcon } from "lucide-react";
 const Index = () => {
   const [recentContent, setRecentContent] = useState<any[]>([]);
   const [recentArticles, setRecentArticles] = useState<any[]>([]);
