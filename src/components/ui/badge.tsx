@@ -20,7 +20,7 @@ const badgeVariants = cva(
         feat: "border-transparent bg-content-feat/20 text-content-feat border-content-feat/40",
         subrace: "border-transparent bg-content-subrace/20 text-content-subrace border-content-subrace/40",
         magic_item: "border-content-magic_item/40 bg-content-magic_item/20 text-content-magic_item",
-        npc: "border-content-npc bg-content-npc/10 text-content-npc",
+        npc: "border-content-npc/40 bg-content-npc/20 text-content-npc",
         // Article type variants
         "design-notes": "border-transparent bg-article-design/20 text-article-design border-article-design/40",
         "dev-diaries": "border-transparent bg-article-dev/20 text-article-dev border-article-dev/40",
