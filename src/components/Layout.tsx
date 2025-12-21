@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Home, Library, PenTool, User, Mail, Rocket, Anvil, Edit, LogOut, LayoutDashboard, Image } from "lucide-react";
+import { BookOpen, Home, Library, PenTool, User, Mail, Rocket, Anvil, Edit, LogOut, LayoutDashboard, Image, Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { ParallaxBackdrop } from "@/components/ParallaxBackdrop";
 import { ContactFormDialog } from "@/components/ContactFormDialog";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import navLogo from "@/assets/logonav.png";
 import footerLogo from "@/assets/logo3.jpg";
 
@@ -26,6 +27,7 @@ const Layout = ({
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isEditor, setIsEditor] = useState(false);
   const [contactFormOpen, setContactFormOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     // Check initial session
@@ -121,6 +123,7 @@ const Layout = ({
                 />
               </Link>
 
+              {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center space-x-8">
                 {allNavItems.map(item => {
                 const Icon = item.icon;
@@ -132,19 +135,97 @@ const Layout = ({
               })}
               </nav>
 
-              {user ? (
-                <Button variant="hero" size="lg" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              ) : (
-                <Button variant="hero" size="lg" asChild>
-                  <Link to="/auth">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Login
-                  </Link>
-                </Button>
-              )}
+               <div className="flex items-center gap-4">
+                {/* Desktop Auth Button */}
+                <div className="hidden md:block">
+                  {user ? (
+                    <Button variant="hero" size="lg" onClick={handleLogout}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </Button>
+                  ) : (
+                    <Button variant="hero" size="lg" asChild>
+                      <Link to="/auth">
+                        <Edit className="h-4 w-4 mr-2" />
+                        Login
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+
+                {/* Mobile Menu Button */}
+                <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                  <SheetTrigger asChild className="md:hidden">
+                    <Button variant="ghost" size="icon" className="text-foreground">
+                      <Menu className="h-6 w-6" />
+                      <span className="sr-only">Open menu</span>
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="w-[280px] bg-card border-border p-0">
+                    <div className="flex flex-col h-full">
+                      {/* Mobile Menu Header */}
+                      <div className="p-4 border-b border-border">
+                        <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center">
+                          <img
+                            src={navLogo}
+                            alt="Featherpass logo"
+                            className="h-10 w-auto"
+                          />
+                        </Link>
+                      </div>
+
+                      {/* Mobile Navigation Links */}
+                      <nav className="flex-1 overflow-y-auto py-4">
+                        {allNavItems.map(item => {
+                          const Icon = item.icon;
+                          const isActive = location.pathname === item.path;
+                          return (
+                            <SheetClose asChild key={item.path}>
+                              <Link 
+                                to={item.path} 
+                                className={`flex items-center space-x-3 px-6 py-3 transition-colors ${
+                                  isActive 
+                                    ? "text-secondary bg-accent/10 border-r-2 border-secondary" 
+                                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                }`}
+                              >
+                                <Icon className="h-5 w-5" />
+                                <span className="font-crimson text-lg">{item.label}</span>
+                              </Link>
+                            </SheetClose>
+                          );
+                        })}
+                      </nav>
+
+                      {/* Mobile Menu Footer - Auth Button */}
+                      <div className="p-4 border-t border-border">
+                        {user ? (
+                          <Button 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => {
+                              handleLogout();
+                              setMobileMenuOpen(false);
+                            }}
+                          >
+                            <LogOut className="h-4 w-4 mr-2" />
+                            Logout
+                          </Button>
+                        ) : (
+                          <SheetClose asChild>
+                            <Button variant="hero" className="w-full" asChild>
+                              <Link to="/auth">
+                                <Edit className="h-4 w-4 mr-2" />
+                                Login
+                              </Link>
+                            </Button>
+                          </SheetClose>
+                        )}
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
             </div>
           </div>
         </header>

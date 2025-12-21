@@ -130,7 +130,7 @@ const Index = () => {
   return <Layout>
       {/* Hero Section */}
 <section
-  className="relative min-h-screen flex items-center justify-center bg-center bg-no-repeat bg-cover"
+  className="relative min-h-screen flex items-center justify-center bg-center bg-no-repeat bg-cover overflow-hidden"
   // 1. Image as the sole background layer
   style={{ backgroundImage: `url(${heroBackground})` }}
 >
@@ -170,13 +170,13 @@ const Index = () => {
             </a>*/}
             
             <h3 
-              className="text-7xl md:text-9xl font-cinzel font-bold mb-4 text-brushed-steel-outlined"
+              className="text-6xl sm:text-6xl md:text-8xl lg:text-9xl font-cinzel font-bold mb-4 text-brushed-steel-outlined"
               data-text="Featherpass"
             >
               Featherpass
             </h3>
             
-            <p className="text-lg md:text-6xl font-tangerine mb-8 leading-relaxed max-w-3xl mx-auto bold text-logo-gold">
+            <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-tangerine mb-8 leading-relaxed max-w-3xl mx-auto bold text-logo-gold">
               Chart your Journey · Shape your Destiny
             </p>
             
