@@ -48,16 +48,16 @@ All colors MUST be HSL.
     --accent-foreground: 28 15% 8%;
 
     /* Content Type Colors */
-   --monster-color: 0 75% 35%;
-   --subclass-color: 260 70% 50%;
+   --monster-color: 0 85% 50%;
+   --subclass-color: 265 80% 55%;
    --spell-color: 220 85% 55%;
-   --item-color: 48 96% 53%; /* optional tweak, matches your old yellow-400 look */
-   --feat-color: 15 85% 45%;
-   --subrace-color: 140 65% 45%;
+   --item-color: 48 80% 50%; /* optional tweak, matches your old yellow-400 look */
+   --feat-color: 18 75% 45%;
+   --subrace-color: 140 60% 45%;
    --npc-color: 0 0% 100%;   /* NEW, white for text, border, and bg base */
 
     /* Article Type Colors */
-    --design-notes-color: 12 80% 55%; /* forge orange red */
+    --design-notes-color: 13 80% 55%; /* forge orange red */
     --dev-diaries-color: 270 65% 50%; /* Violet for future use */
     --world-building-color: 150 55% 45%; /* Sage emerald */
     --lore-essays-color: 210 75% 60%; /* Ethereal blue */
