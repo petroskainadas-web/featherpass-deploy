@@ -373,7 +373,7 @@ const Gallery = () => {
               landscapeImages.length > 0 && (
                 <section>
                   <h2 className="text-3xl font-cinzel font-bold mb-6 text-secondary text-center">Landscape & Maps</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {landscapeImages.map((image) => (
                       <Link key={image.id} to={`/gallery/${image.id}`} className="block">
                         <Card className={getFrameStyles("landscape")}>
@@ -422,7 +422,7 @@ const Gallery = () => {
               portraitImages.length > 0 && (
                 <section>
                   <h2 className="text-3xl font-cinzel font-bold mb-6 text-secondary text-center">Allies & Foes</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                     {portraitImages.map((image) => (
                       <Link key={image.id} to={`/gallery/${image.id}`} className="block">
                         <Card className={getFrameStyles("portrait")}>
@@ -471,7 +471,7 @@ const Gallery = () => {
               squareImages.length > 0 && (
                 <section>
                   <h2 className="text-3xl font-cinzel font-bold mb-6 text-secondary text-center">Items & Concept Art</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                     {squareImages.map((image) => (
                       <Link key={image.id} to={`/gallery/${image.id}`} className="block">
                         <Card className={getFrameStyles("square")}>

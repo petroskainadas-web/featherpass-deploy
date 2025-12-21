@@ -103,7 +103,7 @@ export const ContactFormDialog = ({ open, onOpenChange }: ContactFormDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] bg-gradient-card border-border">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[550px] max-h-[90vh] overflow-y-auto bg-gradient-card border-border">
         <DialogHeader>
           <DialogTitle className="text-2xl font-cinzel text-foreground flex items-center gap-2">
             <Mail className="w-6 h-6 text-secondary" />
