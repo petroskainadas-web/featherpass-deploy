@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Calendar, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useViewTracker } from "@/hooks/useViewTracker";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const GalleryView = () => {
@@ -15,6 +16,15 @@ const GalleryView = () => {
   const [loading, setLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
+    // Protected view increment function
+  const incrementViewCount = useCallback(async () => {
+    if (!id) return;
+    await supabase.rpc('increment_gallery_views', { gallery_image_id: id });
+  }, [id]);
+
+  // Use the protected view tracker hook
+  useViewTracker('gallery', id, incrementViewCount);
+
   useEffect(() => {
     fetchGalleryImage();
   }, [id]);
@@ -23,10 +33,7 @@ const GalleryView = () => {
     try {
       if (!id) return;
 
-      // Increment view count
-      await supabase.rpc('increment_gallery_views', { gallery_image_id: id });
-
-      // Fetch gallery image with image file data
+      // Fetch gallery image with image file data (view increment moved to hook)
       const { data, error } = await supabase
         .from("gallery_images")
         .select(`

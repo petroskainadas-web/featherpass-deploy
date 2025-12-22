@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import Layout from "@/components/Layout";
 import { Clock, Heart, Eye, ArrowLeft, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useViewTracker } from "@/hooks/useViewTracker";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import DOMPurify from "dompurify";
@@ -19,9 +20,17 @@ const ArticleView = () => {
   const [hasLiked, setHasLiked] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
 
+   // Protected view increment function
+  const incrementViewCount = useCallback(async () => {
+    if (!id) return;
+    await supabase.rpc("increment_article_views", { article_id: parseInt(id) });
+  }, [id]);
+
+  // Use the protected view tracker hook
+  useViewTracker('article', id, incrementViewCount);
+
   useEffect(() => {
     fetchArticle();
-    incrementViewCount();
   }, [id]);
 
   const fetchArticle = async () => {
@@ -47,14 +56,6 @@ const ArticleView = () => {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const incrementViewCount = async () => {
-    try {
-      await supabase.rpc("increment_article_views", { article_id: parseInt(id!) });
-    } catch (error) {
-      console.error("Failed to increment view count:", error);
     }
   };
 
