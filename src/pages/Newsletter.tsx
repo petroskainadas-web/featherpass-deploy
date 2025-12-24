@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,12 +19,15 @@ import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import newsletterBackground from "@/assets/backgrounds/newsletter-bg.jpg";
+import TurnstileWidget, { TurnstileWidgetRef } from "@/components/TurnstileWidget";
 
 const Newsletter = () => {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,18 +53,30 @@ const Newsletter = () => {
       return;
     }
 
+    // Require Turnstile token
+    if (!turnstileToken) {
+      toast({
+        title: "Verification Required",
+        description: "Please complete the security check",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const { error } = await supabase.functions.invoke('newsletter-subscribe', {
-        body: { email: email.trim() },
+        body: { email: email.trim(), turnstileToken },
       });
 
       if (error) throw error;
 
       setIsSuccess(true);
       setEmail("");
-      
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
+
       toast({
         title: "Successfully Subscribed!",
         description: "Welcome to the Featherpass community.",
@@ -78,6 +93,9 @@ const Newsletter = () => {
         description: error.message || "Unable to subscribe. Please try again later.",
         variant: "destructive",
       });
+      // Reset Turnstile on error
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -187,12 +205,19 @@ const Newsletter = () => {
                       required
                     />
                   </div>
+                  <TurnstileWidget
+                    ref={turnstileRef}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onExpire={() => setTurnstileToken(null)}
+                    onError={() => setTurnstileToken(null)}
+                    className="flex justify-center"
+                  />
                   <Button 
                     type="submit" 
                     className="w-full" 
                     size="lg" 
                     variant="hero"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !turnstileToken}
                   >
                     {isSubmitting ? (
                       <>

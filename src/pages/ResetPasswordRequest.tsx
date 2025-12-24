@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { ArrowLeft } from "lucide-react";
+import TurnstileWidget, { TurnstileWidgetRef } from "@/components/TurnstileWidget";
 
 const emailSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -17,6 +18,8 @@ const ResetPasswordRequest = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -35,8 +38,18 @@ const ResetPasswordRequest = () => {
         return;
       }
 
+      // Require Turnstile token
+      if (!turnstileToken) {
+        toast({
+          title: "Verification Required",
+          description: "Please complete the security check",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { error } = await supabase.functions.invoke("send-password-reset", {
-        body: { email },
+        body: { email, turnstileToken },
       });
 
       if (error) throw error;
@@ -48,6 +61,9 @@ const ResetPasswordRequest = () => {
         description: error.message,
         variant: "destructive",
       });
+      // Reset Turnstile on error
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
     } finally {
       setLoading(false);
     }
@@ -94,7 +110,14 @@ const ResetPasswordRequest = () => {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <TurnstileWidget
+                  ref={turnstileRef}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken(null)}
+                  onError={() => setTurnstileToken(null)}
+                  className="flex justify-center"
+                />
+                <Button type="submit" className="w-full" disabled={loading || !turnstileToken}>
                   {loading ? "Sending..." : "Send Reset Link"}
                 </Button>
               </form>

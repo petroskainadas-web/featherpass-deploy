@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { verifyTurnstileToken, createTurnstileErrorResponse } from "../_shared/turnstileVerifier.ts";
 import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
@@ -14,6 +15,7 @@ interface ContactRequest {
   email: string;
   subject: string;
   message: string;
+  turnstileToken?: string;
 }
 
 const sanitizeText = (text: string, maxLength?: number): string => {
@@ -29,11 +31,54 @@ const sanitizeText = (text: string, maxLength?: number): string => {
   return sanitized;
 };
 
+// Helper: extract IP (best-effort)
+function getClientIp(req: Request): string {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) return realIp;
+
+  return "unknown";
+}
+
 serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+ // Stateless guard: block non-POST and non-JSON requests before req.json()
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "Method not allowed" }),
+      {
+        status: 405,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      }
+    );
+  }
+
+  const contentType = req.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("application/json")) {
+    return new Response(
+      JSON.stringify({ error: "Unsupported content type" }),
+      {
+        status: 415,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      }
+    );
+  }
+
+  try {
+    const { name, email, subject, message, turnstileToken }: ContactRequest = await req.json();
+
+    // Verify Turnstile token BEFORE any business logic
+    const turnstileResult = await verifyTurnstileToken(turnstileToken, getClientIp(req));
+    if (!turnstileResult.success) {
+      console.warn(`Turnstile verification failed for contact form: ${turnstileResult.error}`);
+      return createTurnstileErrorResponse(corsHeaders);
+    }
   
   // Rate Limit---------------------------------------------
   const limitedIp = await enforceIpLimit({
@@ -44,9 +89,6 @@ serve(async (req: Request) => {
    mode: "json",
   });
   if (limitedIp) return limitedIp;
-
-  try {
-    const { name, email, subject, message }: ContactRequest = await req.json();
 
     // Validate required fields
     if (!name || !email || !subject || !message) {

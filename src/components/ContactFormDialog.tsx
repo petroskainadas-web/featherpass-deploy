@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Mail, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import TurnstileWidget, { TurnstileWidgetRef } from "@/components/TurnstileWidget";
 
 interface ContactFormDialogProps {
   open: boolean;
@@ -19,6 +20,8 @@ export const ContactFormDialog = ({ open, onOpenChange }: ContactFormDialogProps
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -61,6 +64,16 @@ export const ContactFormDialog = ({ open, onOpenChange }: ContactFormDialogProps
       return;
     }
 
+    // Require Turnstile token
+    if (!turnstileToken) {
+      toast({
+        title: "Verification Required",
+        description: "Please complete the security check",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -70,6 +83,7 @@ export const ContactFormDialog = ({ open, onOpenChange }: ContactFormDialogProps
           email: formData.email.trim(),
           subject: formData.subject,
           message: formData.message.trim(),
+          turnstileToken,
         },
       });
 
@@ -87,6 +101,8 @@ export const ContactFormDialog = ({ open, onOpenChange }: ContactFormDialogProps
           honeypot: "",
         });
         setIsSuccess(false);
+        setTurnstileToken(null);
+        turnstileRef.current?.reset();
         onOpenChange(false);
       }, 3000);
     } catch (error: any) {
@@ -96,6 +112,9 @@ export const ContactFormDialog = ({ open, onOpenChange }: ContactFormDialogProps
         description: error.message || "Unable to send your message. Please try again later.",
         variant: "destructive",
       });
+      // Reset Turnstile on error
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -211,6 +230,14 @@ export const ContactFormDialog = ({ open, onOpenChange }: ContactFormDialogProps
               </p>
             </div>
 
+            <TurnstileWidget
+              ref={turnstileRef}
+              onSuccess={(token) => setTurnstileToken(token)}
+              onExpire={() => setTurnstileToken(null)}
+              onError={() => setTurnstileToken(null)}
+              className="flex justify-center"
+            />
+
             <div className="pt-2">
               <p className="text-xs text-muted-foreground font-crimson mb-4">
                 By sending, you agree to our{" "}
@@ -224,7 +251,7 @@ export const ContactFormDialog = ({ open, onOpenChange }: ContactFormDialogProps
                 type="submit"
                 className="w-full"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
               >
                 {isSubmitting ? (
                   <>

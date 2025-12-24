@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import TurnstileWidget, { TurnstileWidgetRef } from "@/components/TurnstileWidget";
 
 const authSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -18,6 +19,8 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -52,8 +55,22 @@ const Auth = () => {
         return;
       }
 
+      // Require Turnstile token
+      if (!captchaToken) {
+        toast({
+          title: "Verification Required",
+          description: "Please complete the security check",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+          const { error } = await supabase.auth.signInWithPassword({ 
+          email, 
+          password,
+          options: { captchaToken }
+        });
         if (error) throw error;
         toast({ title: "Welcome back!", description: "Successfully logged in" });
       } else {
@@ -62,6 +79,7 @@ const Auth = () => {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/dashboard`,
+            captchaToken,
           },
         });
         if (error) throw error;
@@ -74,6 +92,9 @@ const Auth = () => {
         description: error.message,
         variant: "destructive",
       });
+      // Reset Turnstile on error
+      turnstileRef.current?.reset();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -123,13 +144,24 @@ const Auth = () => {
                 </div>
               )}
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+              <TurnstileWidget
+              ref={turnstileRef}
+              onSuccess={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
+              onError={() => setCaptchaToken(null)}
+              className="flex justify-center"
+            />
+            <Button type="submit" className="w-full" disabled={loading || !captchaToken}>
               {loading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
             </Button>
           </form>
           <div className="mt-4 text-center">
             <button
-              onClick={() => setIsLogin(!isLogin)}
+                onClick={() => {
+                setIsLogin(!isLogin);
+                turnstileRef.current?.reset();
+                setCaptchaToken(null);
+              }}
               className="text-sm text-primary hover:underline"
             >
               {isLogin ? "Create new account" : "Back to sign in"}

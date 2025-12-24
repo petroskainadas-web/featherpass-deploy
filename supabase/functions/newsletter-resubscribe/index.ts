@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
+import { verifyTurnstileToken, createTurnstileErrorResponse } from "../_shared/turnstileVerifier.ts";
 import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
@@ -18,6 +19,18 @@ const KIT_TAG_UNSUBSCRIBED_ID = Deno.env.get("KIT_TAG_UNSUBSCRIBED_ID")!;
 interface ResubscribeRequest {
   token?: string;
   email?: string;
+  turnstileToken?: string;
+}
+
+// Helper: extract IP (best-effort)
+function getClientIp(req: Request): string {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) return realIp;
+
+  return "unknown";
 }
 
 const createWelcomeBackEmail = (email: string, unsubscribeUrl: string) => {
@@ -99,7 +112,39 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
-  
+
+// Stateless guard: block non-POST and non-JSON requests before req.json()
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "Method not allowed" }),
+      {
+        status: 405,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      }
+    );
+  }
+
+  const contentType = req.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("application/json")) {
+    return new Response(
+      JSON.stringify({ error: "Unsupported content type" }),
+      {
+        status: 415,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      }
+    );
+  }
+
+  try {
+    const { token, email, turnstileToken }: ResubscribeRequest = await req.json();
+
+    // Verify Turnstile token BEFORE any business logic
+    const turnstileResult = await verifyTurnstileToken(turnstileToken, getClientIp(req));
+    if (!turnstileResult.success) {
+      console.warn(`Turnstile verification failed for newsletter-resubscribe: ${turnstileResult.error}`);
+      return createTurnstileErrorResponse(corsHeaders);
+    }
+
   // Rate Limit---------------------------------------------
   const limitedIp = await enforceIpLimit({
    req,
@@ -109,9 +154,6 @@ serve(async (req: Request) => {
    mode: "json",
   });
   if (limitedIp) return limitedIp;
-
-  try {
-    const { token, email }: ResubscribeRequest = await req.json();
 
     // Validate that at least one identifier is provided
     if ((!token || typeof token !== 'string') && (!email || typeof email !== 'string')) {

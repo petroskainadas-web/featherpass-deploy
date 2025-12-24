@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import { AlertCircle, CheckCircle2, Mail, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import newsletterBg from "@/assets/backgrounds/newsletter-bg.jpg";
+import TurnstileWidget, { TurnstileWidgetRef } from "@/components/TurnstileWidget";
 
 export default function NewsletterUnsubscribe() {
   const [searchParams] = useSearchParams();
@@ -22,6 +23,8 @@ export default function NewsletterUnsubscribe() {
   const [customReason, setCustomReason] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
   useEffect(() => {
     if (!token) {
@@ -69,9 +72,18 @@ export default function NewsletterUnsubscribe() {
   const handleResubscribe = async () => {
     if (!token) return;
 
+        if (!turnstileToken) {
+      toast({
+        title: "Verification Required",
+        description: "Please complete the security check",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke("newsletter-resubscribe", {
-        body: { token }
+        body: { token, turnstileToken }
       });
 
       if (error) throw error;
@@ -90,6 +102,8 @@ export default function NewsletterUnsubscribe() {
         description: "Failed to resubscribe. Please use the newsletter form.",
         variant: "destructive",
       });
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
     }
   };
 
@@ -234,10 +248,19 @@ export default function NewsletterUnsubscribe() {
                   </p>
                 </div>
 
+               <TurnstileWidget
+                  ref={turnstileRef}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken(null)}
+                  onError={() => setTurnstileToken(null)}
+                  className="flex justify-center mb-4"
+                />
+
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Button
                     size="lg"
                     onClick={handleResubscribe}
+                    disabled={!turnstileToken}
                     className="w-full sm:w-auto"
                   >
                     Actually, resubscribe me

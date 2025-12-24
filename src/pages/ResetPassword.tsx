@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { AlertCircle } from "lucide-react";
+import TurnstileWidget, { TurnstileWidgetRef } from "@/components/TurnstileWidget";
 
 const passwordSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -23,6 +24,8 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [validating, setValidating] = useState(true);
   const [tokenError, setTokenError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileWidgetRef>(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -83,9 +86,19 @@ const ResetPassword = () => {
         throw new Error("No reset token provided");
       }
 
+            // Require Turnstile token
+      if (!turnstileToken) {
+        toast({
+          title: "Verification Required",
+          description: "Please complete the security check",
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Call edge function to reset password with token
       const { data, error } = await supabase.functions.invoke("reset-password-with-token", {
-        body: { token, password },
+        body: { token, password, turnstileToken },
       });
 
       if (error) throw error;
@@ -105,6 +118,9 @@ const ResetPassword = () => {
         description: error.message || "Failed to reset password",
         variant: "destructive",
       });
+      // Reset Turnstile on error
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
     } finally {
       setLoading(false);
     }
@@ -184,7 +200,14 @@ const ResetPassword = () => {
                 minLength={6}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+              <TurnstileWidget
+              ref={turnstileRef}
+              onSuccess={(token) => setTurnstileToken(token)}
+              onExpire={() => setTurnstileToken(null)}
+              onError={() => setTurnstileToken(null)}
+              className="flex justify-center"
+            />
+            <Button type="submit" className="w-full" disabled={loading || !turnstileToken}>
               {loading ? "Updating..." : "Update Password"}
             </Button>
           </form>

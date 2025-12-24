@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { verifyTurnstileToken, createTurnstileErrorResponse } from "../_shared/turnstileVerifier.ts";
 import { enforceIpLimit, enforceValueLimit, limiters } from "../_shared/ratelimiter.ts";
 
 const corsHeaders = {
@@ -10,6 +11,18 @@ const corsHeaders = {
 interface ResetPasswordRequest {
   token: string;
   password: string;
+  turnstileToken?: string;
+}
+
+// Helper: extract IP (best-effort)
+function getClientIp(req: Request): string {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) return realIp;
+
+  return "unknown";
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -17,7 +30,39 @@ const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Stateless guard: block non-POST and non-JSON requests before req.json()
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "Method not allowed" }),
+      {
+        status: 405,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      }
+    );
+  }
+
+  const contentType = req.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("application/json")) {
+    return new Response(
+      JSON.stringify({ error: "Unsupported content type" }),
+      {
+        status: 415,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      }
+    );
+  }
    
+try {
+    const { token, password, turnstileToken }: ResetPasswordRequest = await req.json();
+
+    // Verify Turnstile token BEFORE any business logic
+    const turnstileResult = await verifyTurnstileToken(turnstileToken, getClientIp(req));
+    if (!turnstileResult.success) {
+      console.warn(`Turnstile verification failed for reset-password-with-token: ${turnstileResult.error}`);
+      return createTurnstileErrorResponse(corsHeaders);
+    }
+
   // Rate Limit---------------------------------------------
   const limitedIp = await enforceIpLimit({
    req,
@@ -28,8 +73,7 @@ const handler = async (req: Request): Promise<Response> => {
  });
  if (limitedIp) return limitedIp;
 
-  try {
-    const { token, password }: ResetPasswordRequest = await req.json();
+
 
     if (!token || !password) {
       return new Response(
